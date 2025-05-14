@@ -17,7 +17,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-// Product defines a product with searchable fields
 type Product struct {
 	ID       int
 	Name     string
@@ -25,12 +24,12 @@ type Product struct {
 }
 
 var (
-	products []Product   // In-memory product data
-	index    bleve.Index // Bleve search index
+	products []Product
+	index    bleve.Index
 )
 
 func main() {
-	// Step 1: Generate dummy data
+	// dummy
 	categories := []string{"Electronics", "Books", "Clothing", "Toys"}
 	products = make([]Product, 1000000)
 	for i := range products {
@@ -41,7 +40,7 @@ func main() {
 		}
 	}
 
-	// Step 2: Open or create Bleve index
+	// Bleve index
 	var err error
 	index, err = bleve.Open("products.bleve")
 	if err == bleve.ErrorIndexPathDoesNotExist {
@@ -52,7 +51,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		// Batch indexing for performance
+		// Batch indexing
 		fmt.Println("Indexing products... (this may take a few minutes)")
 		batch := index.NewBatch()
 		for i, p := range products {
@@ -73,21 +72,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Step 3: Setup Chi router
+	// Chi
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Compress(5)) // Enable gzip compression
+	r.Use(middleware.Compress(5)) // gzip
 
-	// Health route
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Server is running"))
 	})
 
-	// Search route
 	r.Get("/search", searchHandler)
 
-	// Step 4: Setup graceful shutdown
+	// shutdown
 	srv := &http.Server{
 		Addr:    ":8080",
 		Handler: r,
@@ -120,7 +117,7 @@ func main() {
 	fmt.Println("Server stopped gracefully.")
 }
 
-// searchHandler handles GET /search?q=term[&from=0&size=50]
+// searchHandler
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
 	if q == "" {
@@ -128,7 +125,6 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Support pagination
 	fromStr := r.URL.Query().Get("from")
 	sizeStr := r.URL.Query().Get("size")
 	from, _ := strconv.Atoi(fromStr)
@@ -137,7 +133,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		size = 50
 	}
 
-	// Use query string query for fielded search
+	// fielded search
 	query := bleve.NewQueryStringQuery(q)
 	searchRequest := bleve.NewSearchRequestOptions(query, size, from, false)
 
