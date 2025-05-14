@@ -3,8 +3,12 @@
 A high-performance full-text search API written in **Go**, capable of searching over **1 million in-memory products** using **Bleve** for indexing. Built with **Chi Router**, **Dockerized** for deployment, and designed with **graceful shutdown**, this project simulates a real-world e-commerce search microservice.
 
 
-📄 [Download DOCUMENTATION 📄
-[⬇️ Download Decision Log (DOCX)](https://github.com/ak2k4/product-search/raw/main/DecisionLog_Atharv-Kaushik.docx)
+PLEASE FIND THE DOCX
+Named:
+```bash
+DecisionLog_Atharv-Kaushik.docx
+```
+in the Repository for Documentation
 
 
 
