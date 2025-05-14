@@ -32,3 +32,9 @@ git clone https://github.com/ak2k4/product-search.git
 cd product-search
 go mod tidy
 go run main.go
+---
+
+### 🔧 Setup (With Docker)
+```bash
+docker build -t product-search .
+docker run -p 8080:8080 product-search
